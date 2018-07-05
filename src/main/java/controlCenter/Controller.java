@@ -27,7 +27,7 @@ import writer.xsdWriter.SendXsdWriter;
 public class Controller {
 
 	public static void main(String[] args) {
-		//FIXME excel文件位置和名称
+		//FIXME excel文件位置和名称00000
 		String excelPath = "C:\\Users\\18153\\Desktop\\0300200000255.xls";
 		
 		/**
