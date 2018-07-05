@@ -24,6 +24,7 @@ public class FileUtils {
 	 *            要写入文件的字符串
 	 */
 	public static boolean createFile(String filePath, String fileName, String fileType, String fileContent) {
+		isExist(filePath);
 		String filenameTemp = filePath + fileName + fileType;
 		Boolean bool = false;
 		File file = new File(filenameTemp);
@@ -57,6 +58,17 @@ public class FileUtils {
 		return bool;
 	}
 
+	
+	/**
+	 * 判断文件夹是否存在，不存在则创建
+	 */
+	public static void isExist(String filePath) {
+		File file = new File(filePath);
+		if(!file.exists()) {
+			file.mkdir();
+		}
+	}
+	
 	/**
 	 * 向文件中写入内容
 	 * 

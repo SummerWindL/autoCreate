@@ -21,7 +21,8 @@ public class XsdHead {
 			DetailEntity e=sendHead.get(i);
 			if("service".equals(e.getSelfName())) {
 				xsdHead.append("<xs:element name=\"service\" type=\"service\" />\r\n"); 
-				xsdHead.append("	<!-- add by "+mainMsg.getMaker()+" 帐户信息查询  -->\r\n");
+				xsdHead.append("	<!-- add by "+mainMsg.getMaker()+ " " +mainMsg.getWorkName()+" 查询  -->\r\n");
+				
 			}else {
 				//TODO 如果e.getParentName()为空字符串  应抛异常
 				if("".equals(e.getParentName())) {
@@ -31,7 +32,12 @@ public class XsdHead {
 				if(tempParentName.equals(e.getParentName()) ) {
 					//如果本节点的父节点和上一个节点的父节点相同
 					if("simple".equals(e.getType().toLowerCase())) {
-						xsdHead.append("			<xs:element name=\""+e.getSelfName()+"\" type=\""+e.getSelfName()+"\"></xs:element>\r\n");						
+						if(e.getSelfName().equals("SERVICE_CODE")) {
+							xsdHead.append("			<xs:element name=\""+e.getSelfName()+"\" type=\"TRANS_CODE\"></xs:element>\r\n");
+						}else {
+							xsdHead.append("			<xs:element name=\""+e.getSelfName()+"\" type=\""+e.getSelfName()+"\"></xs:element>\r\n");
+						}
+												
 					}else if("complex".equals(e.getType().toLowerCase())){
 						xsdHead.append("			<xs:element name=\""+e.getSelfName()+"\" maxOccurs=\"1000\" type=\""+e.getSelfName()+"\"></xs:element>\r\n");
 					}else {
@@ -48,7 +54,11 @@ public class XsdHead {
 					xsdHead.append("	<xs:complexType name=\""+e.getParentName()+"\">\r\n" ); 
 					xsdHead.append("		<xs:sequence>\r\n");					
 					if("simple".equals(e.getType().toLowerCase())) {
-						xsdHead.append("			<xs:element name=\""+e.getSelfName()+"\" type=\""+e.getSelfName()+"\"></xs:element>\r\n");						
+						if(e.getSelfName().equals("SERVICE_CODE")) {
+							xsdHead.append("			<xs:element name=\""+e.getSelfName()+"\" type=\"TRANS_CODE\"></xs:element>\r\n");
+						}else {
+							xsdHead.append("			<xs:element name=\""+e.getSelfName()+"\" type=\""+e.getSelfName()+"\"></xs:element>\r\n");						
+						}
 					}else if("complex".equals(e.getType().toLowerCase())){
 						xsdHead.append("			<xs:element name=\""+e.getSelfName()+"\" maxOccurs=\"1000\" type=\""+e.getSelfName()+"\"></xs:element>\r\n");
 					}else {
@@ -71,11 +81,19 @@ public class XsdHead {
 			DetailEntity e=sendHead.get(i);
 			//TODO 如果excel字段非法,应抛异常
 			if("N".equals(e.getIsParentNode().toUpperCase())) {
-				xsdHeadSimpleType.append("	<xs:simpleType name=\""+e.getSelfName()+"\">\r\n");
-				xsdHeadSimpleType.append("		<xs:restriction base=\"xs:string\">\r\n");
-				xsdHeadSimpleType.append("			<xs:length value=\"256\"></xs:length>\r\n");
-				xsdHeadSimpleType.append("		</xs:restriction>\r\n");
-				xsdHeadSimpleType.append("	</xs:simpleType>\r\n");
+				if(e.getSelfName().equals("SERVICE_CODE")) {
+					xsdHeadSimpleType.append("	<xs:simpleType name=\"TRANS_CODE\">\r\n");
+					xsdHeadSimpleType.append("		<xs:restriction base=\"xs:string\">\r\n");
+					xsdHeadSimpleType.append("			<xs:length value=\"256\"></xs:length>\r\n");
+					xsdHeadSimpleType.append("		</xs:restriction>\r\n");
+					xsdHeadSimpleType.append("	</xs:simpleType>\r\n");
+				}else{
+					xsdHeadSimpleType.append("	<xs:simpleType name=\""+e.getSelfName()+"\">\r\n");
+					xsdHeadSimpleType.append("		<xs:restriction base=\"xs:string\">\r\n");
+					xsdHeadSimpleType.append("			<xs:length value=\"256\"></xs:length>\r\n");
+					xsdHeadSimpleType.append("		</xs:restriction>\r\n");
+					xsdHeadSimpleType.append("	</xs:simpleType>\r\n");
+				}
 			}
 		}
 		

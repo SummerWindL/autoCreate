@@ -28,7 +28,7 @@ public class Controller {
 
 	public static void main(String[] args) {
 		//FIXME excel文件位置和名称
-		String excelPath = "C:\\Users\\18153\\Desktop\\0300200000255.xls";
+		String excelPath = "C:\\Users\\huangchaolun\\Desktop\\xsdAndSql.xls";
 		
 		/**
 		 * 每个表格对应一个list对象
@@ -89,7 +89,7 @@ public class Controller {
 		 * 将字符串生成文件
 		 */
 		//FIXME 生成文件的路径,默认C盘guojie文件夹
-		String filePath="C:\\guojie\\";
+		String filePath="D:\\yanl\\temp\\"+mainMsg.getWorkName()+"\\";
 		//发出xsd
 		FileUtils.createFile(filePath, mainMsg.getSendXsdName(), ".xsd",sendXsd );
 		//接收xsd
