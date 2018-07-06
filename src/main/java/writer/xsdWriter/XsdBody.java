@@ -17,7 +17,7 @@ public class XsdBody {
 		StringBuilder xsdBody=new StringBuilder();
 		String tempParentName="";//前一次循环中parentName的值
 		
-		System.out.println("body的总行数: "+sendBody.size());
+//		System.out.println("body的总行数: "+sendBody.size());
 		
 		for(int i=0;i<sendBody.size();i++) {
 			DetailEntity e=sendBody.get(i);

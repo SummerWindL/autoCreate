@@ -16,7 +16,7 @@ public class LoadHeadOrBodySheet {
 		int firstRowIndex = sheetName.getFirstRowNum() + 1; // 第一行是列名，所以不读
 		int lastRowIndex = sheetName.getLastRowNum();// 最后一行
 
-		System.out.println(sheetName.getSheetName()+"共: "+(lastRowIndex+1)+"行!");
+		System.out.println(sheetName.getSheetName()+"共: "+(lastRowIndex)+"行!");
 
 		for (int i = firstRowIndex; i <= lastRowIndex; i++) {
 			DetailEntity entity = new DetailEntity();
@@ -47,6 +47,7 @@ public class LoadHeadOrBodySheet {
 			entity.setNeedParentId(needParentId);
 			entity.setPath(path);
 			entity.setBindMapId(bindMapId);
+			System.out.println(entity);
 			list.add(entity);
 		}
 

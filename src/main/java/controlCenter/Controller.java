@@ -3,6 +3,7 @@ package controlCenter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -28,7 +29,7 @@ public class Controller {
 
 	public static void main(String[] args) {
 		//FIXME excel文件位置和名称
-		String excelPath = "C:\\Users\\huangchaolun\\Desktop\\xsdAndSql.xls";
+		String excelPath = "C:\\Users\\18153\\Desktop\\0911111111104.xls";
 		
 		/**
 		 * 每个表格对应一个list对象
@@ -45,6 +46,33 @@ public class Controller {
 		Sheet receiveHeadSheet = wb.getSheet("接收头");
 		Sheet sendBodySheet = wb.getSheet("发出body");
 		Sheet receiveBodySheet = wb.getSheet("接收body");
+		/**
+		 * 删除发出body空白行
+		 */
+		int i = sendBodySheet.getLastRowNum();
+		HSSFRow tempRow;
+		while(i>0) {
+			i--;
+			tempRow = (HSSFRow) sendBodySheet.getRow(i);
+			if(tempRow == null) {
+				sendBodySheet.shiftRows(i+1, sendBodySheet.getLastRowNum(), -1);
+			}
+		}
+		System.out.println("++++++++++发出body:"+sendBodySheet.getLastRowNum());
+		/**
+		 * 删除发出接收body空白行
+		 */
+		int k;
+		k= receiveBodySheet.getLastRowNum();
+		HSSFRow tempRowReceive;
+		while(k>0) {
+			k--;
+			tempRowReceive = (HSSFRow) receiveBodySheet.getRow(k);
+			if(tempRowReceive == null) {
+				receiveBodySheet.shiftRows(k+1, receiveBodySheet.getLastRowNum(), -1);
+			}
+		}
+		System.out.println("||||||||||接收body:"+receiveBodySheet.getLastRowNum());
 
 		/**
 		 * 读取工作簿中的每个表格,并将读到的内容赋值给对应list对象
@@ -89,7 +117,7 @@ public class Controller {
 		 * 将字符串生成文件
 		 */
 		//FIXME 生成文件的路径,默认C盘guojie文件夹
-		String filePath="D:\\yanl\\temp\\"+mainMsg.getWorkName()+"\\";
+		String filePath="C:\\guojie\\";
 		//发出xsd
 		FileUtils.createFile(filePath, mainMsg.getSendXsdName(), ".xsd",sendXsd );
 		//接收xsd
