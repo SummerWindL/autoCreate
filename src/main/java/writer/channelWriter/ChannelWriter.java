@@ -25,20 +25,60 @@ public class ChannelWriter {
 		mapping.append("    <message-mapping key=\""+mainMsg.getSrcTransCode()+"\" desc=\""+mainMsg.getWorkName()+"\">\r\n");
 		mapping.append("		<send-mapping class=\"ChannelMessage\" desc=\""+mainMsg.getWorkName()+"请求\">\r\n");
 		mapping.append("			<field set=\"COMMON_SEND_HEADER_KEY\" value=\"'crcb_common'\" /><!-- esb header 公共字段取值 -->\r\n");
+		//发送body
 		for(int i=0;i<sendBody.size();i++) {
 			DetailEntity e= sendBody.get(i);
-			if("n".equals(e.getIsParentNode().toLowerCase())) {
-				mapping.append("		    <field set=\""+e.getSelfName()+"\" value=\""+e.getKey()+"\" />\r\n");
+			if("n".equals(e.getIsParentNode().toLowerCase())&&"n".equals(e.getNeedParentId().toLowerCase())) {
+				if(e.getAttrLength().equals("")||e.getAttrScale().equals("")) {
+					continue;
+				}else {
+					mapping.append("		    <field set=\""+e.getSelfName()+"\" value=\""+e.getKey()+"\" />\r\n");
+				}
+				
+			}else {//有y这个标记的话这个就是数组
+				if("y".equals(e.getIsParentNode().toLowerCase())&&"n".equals(e.getNeedParentId().toLowerCase())) {//struct_level_?
+					mapping.append("		    <field set=\""+e.getSelfName().toUpperCase()+"\" value=\""+sendBody.get(i-2).getKey()+"\" class=\"List\">\r\n");
+					mapping.append("				<mapping class=\"Map\"> \r\n");
+					for(int j=i;j<sendBody.size();j++) {
+						DetailEntity entity = sendBody.get(j);
+						if("n".equals(entity.getIsParentNode().toLowerCase())&&"y".equals(entity.getNeedParentId().toLowerCase())) {
+							mapping.append("            <field set=\""+entity.getSelfName()+"\" value=\""+entity.getKey()+"\" /> \r\n");
+						}
+					}
+					mapping.append("				</mapping> \r\n");
+					mapping.append("			</field> \r\n");
+				}
 			}
 		}
 		mapping.append("		</send-mapping>\r\n");
 		//recv-mapping
 		mapping.append("		<recv-mapping class=\"ChannelMessage\" desc=\""+mainMsg.getWorkName()+"应答\">\r\n");
-		mapping.append("			<field set=\"COMMON_SEND_HEADER_KEY\" value=\"'crcb_common'\" /><!-- esb header 公共字段取值 -->\r\n");
+		if(receiveBody.size()>0) {
+			mapping.append("			<field set=\"COMMON_SEND_HEADER_KEY\" value=\"'crcb_common'\" /><!-- esb header 公共字段取值 -->\r\n");
+		}
+		
 		for(int i=0;i<receiveBody.size();i++) {
 			DetailEntity e= receiveBody.get(i);
-			if("n".equals(e.getIsParentNode().toLowerCase())) {
-				mapping.append("		    <field set=\""+e.getSelfName()+"\" value=\""+e.getKey()+"\" />\r\n");
+			if("n".equals(e.getIsParentNode().toLowerCase())&&"n".equals(e.getNeedParentId().toLowerCase())) {
+				if(e.getAttrLength().equals("")||e.getAttrScale().equals("")) {
+					continue;
+				}else {
+					mapping.append("		    <field set=\""+e.getSelfName()+"\" value=\""+e.getKey()+"\" />\r\n");
+				}
+				
+			}else {//有y这个标记的话这个就是数组
+				if("y".equals(e.getIsParentNode().toLowerCase())&&"n".equals(e.getNeedParentId().toLowerCase())) {//struct_level_?
+					mapping.append("		    <field set=\""+e.getSelfName().toUpperCase()+"\" value=\""+receiveBody.get(i-2).getKey()+"\" class=\"List\">\r\n");
+					mapping.append("				<mapping class=\"Map\"> \r\n");
+					for(int j=i;j<receiveBody.size();j++) {
+						DetailEntity entity = receiveBody.get(j);
+						if("n".equals(entity.getIsParentNode().toLowerCase())&&"y".equals(entity.getNeedParentId().toLowerCase())) {
+							mapping.append("            <field set=\""+entity.getSelfName()+"\" value=\""+entity.getKey()+"\" /> \r\n");
+						}
+					}
+					mapping.append("				</mapping> \r\n");
+					mapping.append("			</field> \r\n");
+				}
 			}
 		}
 		mapping.append("		</recv-mapping>\r\n");

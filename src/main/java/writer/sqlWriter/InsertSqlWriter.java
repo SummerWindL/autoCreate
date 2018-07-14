@@ -1,6 +1,9 @@
 package writer.sqlWriter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import loadEntity.DetailEntity;
 import loadEntity.MainMsgEntity;
@@ -10,21 +13,24 @@ import utils.UUIDCreater;
  */
 public class InsertSqlWriter {
 
-	public String getInsertSql(MainMsgEntity mainMsg, 
+	public List getInsertSql(MainMsgEntity mainMsg, 
 			List<DetailEntity> sendHead, List<DetailEntity> sendBody,
 			List<DetailEntity> receiveHead, List<DetailEntity> receiveBody) {
 
+		List returnList =  new ArrayList(); 
 		//--4.schema文件配置表 配置2个,发送和接收 
 		String sql4="--4.schema文件配置表 配置2个,发送和接收\r\n";
 		String uuidSend = UUIDCreater.getUUID32();//发出信息的uuid
 		String uuidReceive = UUIDCreater.getUUID32();//接收信息的uuid
 		String sql4Head="insert into RTTP_SCHEMA_NS values (";
-		String sql4SendSql=sql4Head+"'"+uuidSend+"',"+
-				"'classpath:config/xsd/knl/"+mainMsg.getSendXsdName()+".xsd',"+
+		String nsUUIDSend=uuidSend;
+		String nsUUIDRecv=uuidReceive;
+		String sql4SendSql=sql4Head+"'"+nsUUIDSend+"',"+
+				"'classpath:config/xsd/"+mainMsg.getSendXsdName().substring(0,mainMsg.getSendXsdName().indexOf("."))+"/"+mainMsg.getSendXsdName()+".xsd',"+
 				"'"+mainMsg.getSendXsdName()+"',"+
 				"'1');\r\n";
-		String sql4ReceiveSql=sql4Head+"'"+uuidReceive+"',"+
-				"'classpath:config/xsd/knl/"+mainMsg.getReceiveXsdName()+".xsd',"+
+		String sql4ReceiveSql=sql4Head+"'"+nsUUIDRecv+"',"+
+				"'classpath:config/xsd/"+mainMsg.getFilePath()+"/"+mainMsg.getReceiveXsdName()+".xsd',"+
 				"'"+mainMsg.getReceiveXsdName()+"',"+
 				"'1');\r\n";
 		sql4+=sql4SendSql+sql4ReceiveSql;
@@ -66,17 +72,35 @@ public class InsertSqlWriter {
 		//--9.新加的一张表:用来确定发出字段的属性(发出head是共用的,这里不再生成,只生成发出body部分)
 		String sql9="--9.新加的一张表:用来确定发出字段的属性\r\n";
 		String sql9Head="insert into RTTP_OUTER_ATTRIBUTE values ";
-		for(int i=0;i<sendBody.size();i++) {
-			DetailEntity e=sendBody.get(i);
-			//如果发出body部分不是父节点
-			if("n".equals(e.getIsParentNode().toLowerCase())) {
-				sql9=sql9+sql9Head+"('"+UUIDCreater.getUUID32()+"','"+mainMsg.getSrcTransCode()+"','"+e.getKey()+"','"+e.getAttrScale()+"','"+e.getAttrLength()+"','"+e.getAttrType()+"');\r\n";		
+		
+		String workflowName = mainMsg.getWorkFlowName();
+		if(workflowName.indexOf("TFB")==0) {//国结请求外部系统，请求需要字段属性
+			for(int i=0;i<sendBody.size();i++) {
+				DetailEntity e=sendBody.get(i);
+				//如果发出body部分不是父节点
+				if("n".equals(e.getIsParentNode().toLowerCase())) {
+					sql9=sql9+sql9Head+"('"+UUIDCreater.getUUID32()+"','"+mainMsg.getSrcTransCode()+"','"+e.getKey()+"','"+e.getAttrScale()+"','"+e.getAttrLength()+"','"+e.getAttrType()+"');\r\n";		
+				}
+			}
+		}else {//外部系统请求国结，国结发送响应报文需要字段属性给esb
+			for(int i=0;i<receiveBody.size();i++) {
+				DetailEntity e=receiveBody.get(i);
+				//如果发出body部分不是父节点
+				if("n".equals(e.getIsParentNode().toLowerCase())) {
+					sql9=sql9+sql9Head+"('"+UUIDCreater.getUUID32()+"','"+mainMsg.getDestTransCode()+"','"+e.getKey()+"','"+e.getAttrScale()+"','"+e.getAttrLength()+"','"+e.getAttrType()+"');\r\n";		
+				}
 			}
 		}
+		String sql="";
+		
 		
 		//拼接所有sql
 		String insertSql=sql4+sql5+sql6+sql7+sql8+sql9;
-		return insertSql;
+		returnList.add(0, insertSql);
+		returnList.add(1, nsUUIDSend);
+		returnList.add(2, nsUUIDRecv);
+
+		return returnList;
 	}
 	
 	/**

@@ -20,6 +20,9 @@ public class ReceiveXsdWriter extends XsdWriter {
 		// 文档body部分
 		XsdBody xsdBody = new XsdBody();
 		String xsBody = xsdBody.getXsdBody(receiveBody);
+		if(xsBody==null||"null".equals(xsBody)) {
+			return xsTop + xsHeade + xsSchema4;
+		}
 
 		return xsTop + xsHeade + xsBody + xsSchema4;
 	}

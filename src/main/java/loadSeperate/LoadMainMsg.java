@@ -16,7 +16,8 @@ public class LoadMainMsg {
 		String receiveXsdName = LoadExcel.getValue(sheetName, 7, 1);
 		String channelName = LoadExcel.getValue(sheetName, 9, 1);
 		String workFlowName = LoadExcel.getValue(sheetName, 10, 1);
-
+		String filePath = LoadExcel.getValue(sheetName, 12, 1);
+		
 		mainMsg.setMaker(maker);
 		mainMsg.setWorkName(workName);
 		mainMsg.setSrcTransCode(srcTransCode);
@@ -25,6 +26,6 @@ public class LoadMainMsg {
 		mainMsg.setReceiveXsdName(receiveXsdName);
 		mainMsg.setChannelName(channelName);
 		mainMsg.setWorkFlowName(workFlowName);
-
+		mainMsg.setFilePath(filePath);
 	}
 }
