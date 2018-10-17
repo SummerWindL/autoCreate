@@ -65,7 +65,7 @@ public class FileUtils {
 	public static void isExist(String filePath) {
 		File file = new File(filePath);
 		if(!file.exists()) {
-			file.mkdir();
+			file.mkdirs();
 		}
 	}
 	
